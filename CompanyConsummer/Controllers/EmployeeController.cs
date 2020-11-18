@@ -3,35 +3,77 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CompanyConsumer.Models;
+using CompanyConsummer.EmployeeServices;
 
 namespace CompanyConsummer.Controllers
 {
-    public class EmployeeController : Controller
+    public class DepartmentController : Controller
     {
-        // GET: Employee
-        public ActionResult Index()
+        ServiceClient servicesClient = new ServiceClient();
+        // GET: Department
+        public ViewResult Index(string sortOrder, string search, string currentFilter, int? page)
         {
-            return View();
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            /*            ViewBag.listLocation = servicesClient.getAllLocations();
+            */
+            if (search != null)
+            {
+                page = 1; // nếu search có giá trị trả về page = 1
+            }
+            else
+            {
+                search = currentFilter; //  nếu có thì render phần dữ liệu search ra
+            }
+            ViewBag.CurrentFilter = search;
+            var departments = from s in servicesClient.getAllDepartment() select s;
+            if (!String.IsNullOrEmpty(search)) // check nếu search string có thì in ra hoặc không thì không in ra
+            {
+                departments = departments.Where(s => s.DepartmentName.Contains(search) || s.DepartmentName.Contains(search)); // contains là để check xem lastname hoặc firstName có chứa search string ở trên 
+            }
+            switch (sortOrder)
+            {
+                case "name desc":
+                    departments = departments.OrderByDescending(s => s.DepartmentName); // các case tương đương với các cột muốn sort
+                    break;
+
+                default:
+                    departments = departments.OrderBy(s => s.DepartmentName);
+                    break;
+            }
+
+            return View(departments.ToList());
+
         }
 
-        // GET: Employee/Details/5
+        // GET: Department/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var department = servicesClient.getAllDepartment().Where(b => b.DepartmentID == id).FirstOrDefault();
+            return View(department);
+
         }
 
-        // GET: Employee/Create
+        // GET: Department/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Employee/Create
+        // POST: Department/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Department newDepartment)
         {
             try
             {
+                if (ModelState.IsValid)
+                {
+                    servicesClient.AddDepartment(newDepartment);
+                    return RedirectToAction("Index", "Department");
+                }
+
                 // TODO: Add insert logic here
 
                 return RedirectToAction("Index");
@@ -42,13 +84,13 @@ namespace CompanyConsummer.Controllers
             }
         }
 
-        // GET: Employee/Edit/5
+        // GET: Department/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Employee/Edit/5
+        // POST: Department/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -64,13 +106,13 @@ namespace CompanyConsummer.Controllers
             }
         }
 
-        // GET: Employee/Delete/5
+        // GET: Department/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Employee/Delete/5
+        // POST: Department/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

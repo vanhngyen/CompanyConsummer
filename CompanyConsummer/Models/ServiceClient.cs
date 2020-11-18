@@ -1,8 +1,9 @@
-﻿using CompanyConsummer.EmployeeServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using CompanyConsumer.Models;
+using CompanyConsummer.EmployeeServices;
 
 namespace CompanyConsumer.Models
 {
