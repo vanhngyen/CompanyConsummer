@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompanyConsummer.EmployeeServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,7 +8,7 @@ namespace CompanyConsumer.Models
 {
     public class ServiceClient
     {
-        EmployeeServices.CompanyServiceClient client = new EmployeeServices.CompanyServiceClient();
+        CompanyConsummer.EmployeeServices.CompanyServiceClient client = new CompanyConsummer.EmployeeServices.CompanyServiceClient();
         public List<Department> getAllDepartment()
         {
             var list = client.getDepartments().ToList();
@@ -36,7 +37,7 @@ namespace CompanyConsumer.Models
         }
         public bool CreateDepartment(Department newtDepartmen)
         {
-            var department = new EmployeeServices.Department()
+            var department = new CompanyConsummer.EmployeeServices.Department()
             {
                 DepartmentID = newtDepartmen.DepartmentID,
                 DepartmentName = newtDepartmen.DepartmentName,
@@ -46,7 +47,7 @@ namespace CompanyConsumer.Models
         }
         public bool CreateDepartment(Employee newEmp)
         {
-            var employee = new EmployeeServices.Employee()
+            var employee = new CompanyConsummer.EmployeeServices.Employee()
             {
                 EmployeeID = newEmp.EmployeeID,
                 EmployeeName = newEmp.EmployeeName,
